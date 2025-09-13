@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "alwaysStrict": true,
+        "baseUrl": "./src",
+        "declaration": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": false,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "incremental": true,
+        "outDir": "./dist",
+        "paths": {},
+        "skipLibCheck": true,
+        "strictBindCallApply": false,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "sourceMap": true,
+        "target": "ES2022",
+        "module": "NodeNext", // Change this to commonjs if we are using nest or vite.
+        "moduleResolution": "NodeNext", // Remove this if we are using nest or vite.
+        "typeRoots": ["./node_modules/@types"]
+    }
+}

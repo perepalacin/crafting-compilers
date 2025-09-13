@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "vivaxy.vscode-conventional-commits",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bierner.github-markdown-preview",
+    "yzhang.markdown-all-in-one",
+    "me-dutour-mathieu.vscode-github-actions",
+    "redhat.vscode-yaml",
+    "kennylong.kubernetes-yaml-formatter",
+    "xyz.local-history"
+  ]
+}

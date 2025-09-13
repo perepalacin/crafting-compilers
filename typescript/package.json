@@ -1,0 +1,30 @@
+{
+    "name": "lox-ts-compiler",
+    "version": "0.0.0",
+    "private": false,
+    "repository": "https://github.com/perepalacin/crafting-compilers",
+    "author": "Pere Palacín",
+    "scripts": {
+        "build": "npx tsc",
+        "start": "node ./dist/main.js",
+        "dev": "npm run build && npm run start",
+        "lint": "npx eslint 'src/**/*.{js,ts}' && tsc --noemit",
+        "pretty": "npx prettier --write",
+        "format": "npx prettier --write \"src/**/*.ts\" \"test/**\""
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.35.0",
+        "@types/node": "^24.3.3",
+        "@typescript-eslint/eslint-plugin": "^8.43.0",
+        "@typescript-eslint/parser": "^8.43.0",
+        "eslint": "^9.30.1",
+        "eslint-config-prettier": "10.1.8",
+        "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-n": "^17.21.3",
+        "eslint-plugin-prettier": "5.5.4",
+        "eslint-plugin-promise": "7.2.1",
+        "prettier": "^3.6.2",
+        "prettier-plugin-organize-imports": "^4.2.0",
+        "typescript-eslint": "8.43.0"
+    }
+}

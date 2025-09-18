@@ -12,6 +12,6 @@ export default tseslint.config(eslint.configs.recommended, ...tseslint.configs.s
         "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
         "no-console": "off",
         "@typescript-eslint/interface-name-prefix": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "error",
     },
 });

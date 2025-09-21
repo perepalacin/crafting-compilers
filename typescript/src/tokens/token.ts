@@ -16,4 +16,8 @@ export class Token {
     public toString(): string {
         return this.type + " " + this.lexeme + " " + this.literal;
     }
+
+    public getLexeme(): string {
+        return this.lexeme;
+    }
 }

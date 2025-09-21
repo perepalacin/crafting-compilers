@@ -13,6 +13,9 @@ class Token {
     toString() {
         return this.type + " " + this.lexeme + " " + this.literal;
     }
+    getLexeme() {
+        return this.lexeme;
+    }
 }
 exports.Token = Token;
 //# sourceMappingURL=token.js.map

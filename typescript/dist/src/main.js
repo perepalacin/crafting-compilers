@@ -1,76 +1,16 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Lox = void 0;
-const node_fs_1 = __importDefault(require("node:fs"));
+const ast_printer_1 = require("expression/ast-printer");
+const Expr_1 = require("expression/Expr");
 const node_process_1 = __importDefault(require("node:process"));
-const readline = __importStar(require("node:readline/promises"));
+const token_1 = require("tokens/token");
+const token_type_1 = require("tokens/token-type");
 class Lox {
     static hadError = false;
-    static runFile(path) {
-        const bytes = node_fs_1.default.readFileSync(path);
-        Lox.run(bytes.toString());
-        if (Lox.hadError) {
-            return node_process_1.default.exit(65);
-        }
-    }
-    static async runPrompt() {
-        const rl = readline.createInterface({
-            input: node_process_1.default.stdin,
-            output: node_process_1.default.stdout,
-        });
-        for (;;) {
-            const line = await rl.question("> ");
-            if (line === null)
-                break;
-            Lox.run(line);
-            Lox.hadError = true;
-        }
-    }
-    static scanTokens(_source) {
-        return [];
-    }
-    static run(source) {
-        const tokens = Lox.scanTokens(source);
-        for (const token of tokens) {
-            console.log(token);
-        }
-    }
     static error(line, message) {
         Lox.report(line, "", message);
     }
@@ -79,18 +19,9 @@ class Lox {
         Lox.hadError = true;
     }
     static main(args) {
-        if (!args)
-            return node_process_1.default.exit(0);
-        if (args.length > 1) {
-            console.log("Usage: jlox [script]");
-            return node_process_1.default.exit(64);
-        }
-        else if (args.length == 1) {
-            this.runFile(args[0]);
-        }
-        else {
-            this.runPrompt();
-        }
+        console.log(args);
+        const expression = new Expr_1.Binary(new Expr_1.Unary(new token_1.Token(token_type_1.TokenType.MINUS, "-", null, 1), new Expr_1.Literal(123)), new token_1.Token(token_type_1.TokenType.STAR, "*", null, 1), new Expr_1.Grouping(new Expr_1.Literal(45.67)));
+        console.log(new ast_printer_1.AstPrinter().print(expression));
     }
 }
 exports.Lox = Lox;

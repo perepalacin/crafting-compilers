@@ -5,4 +5,5 @@ export declare class Token {
     private literal;
     constructor(type: TokenType, lexeme: string, literal: object | null, _line: number);
     toString(): string;
+    getLexeme(): string;
 }

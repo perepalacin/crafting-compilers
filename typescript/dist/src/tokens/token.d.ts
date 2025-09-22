@@ -3,7 +3,11 @@ export declare class Token {
     private type;
     private lexeme;
     private literal;
-    constructor(type: TokenType, lexeme: string, literal: object | null, _line: number);
+    private line;
+    constructor(type: TokenType, lexeme: string, literal: object | null, line: number);
     toString(): string;
     getLexeme(): string;
+    getType(): TokenType;
+    getLiteral(): object | null;
+    getLine(): number;
 }

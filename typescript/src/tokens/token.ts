@@ -4,13 +4,13 @@ export class Token {
     private type: TokenType;
     private lexeme: string;
     private literal: object | null;
-    // private line: number;
+    private line: number;
 
-    public constructor(type: TokenType, lexeme: string, literal: object | null, _line: number) {
+    public constructor(type: TokenType, lexeme: string, literal: object | null, line: number) {
         this.type = type;
         this.lexeme = lexeme;
         this.literal = literal;
-        // this.line = line;
+        this.line = line;
     }
 
     public toString(): string {
@@ -19,5 +19,17 @@ export class Token {
 
     public getLexeme(): string {
         return this.lexeme;
+    }
+
+    public getType(): TokenType {
+        return this.type;
+    }
+
+    public getLiteral(): object | null {
+        return this.literal;
+    }
+
+    public getLine(): number {
+        return this.line;
     }
 }

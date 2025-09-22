@@ -5,16 +5,27 @@ class Token {
     type;
     lexeme;
     literal;
-    constructor(type, lexeme, literal, _line) {
+    line;
+    constructor(type, lexeme, literal, line) {
         this.type = type;
         this.lexeme = lexeme;
         this.literal = literal;
+        this.line = line;
     }
     toString() {
         return this.type + " " + this.lexeme + " " + this.literal;
     }
     getLexeme() {
         return this.lexeme;
+    }
+    getType() {
+        return this.type;
+    }
+    getLiteral() {
+        return this.literal;
+    }
+    getLine() {
+        return this.line;
     }
 }
 exports.Token = Token;

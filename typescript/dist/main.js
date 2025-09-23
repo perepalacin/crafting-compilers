@@ -37,12 +37,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Lox = void 0;
-const ast_printer_1 = require("expression/ast-printer");
 const node_fs_1 = __importDefault(require("node:fs"));
 const node_process_1 = __importDefault(require("node:process"));
 const readline = __importStar(require("node:readline/promises"));
-const parser_1 = require("parser/parser");
-const token_type_1 = require("tokens/token-type");
+const ast_printer_1 = require("./expression/ast-printer");
+const parser_1 = require("./parser/parser");
+const scanner_1 = require("./scanner/scanner");
+const token_type_1 = require("./tokens/token-type");
 class Lox {
     static hadError = false;
     static runFile(path) {
@@ -65,11 +66,9 @@ class Lox {
             Lox.hadError = true;
         }
     }
-    static scanTokens(_source) {
-        return [];
-    }
     static run(source) {
-        const tokens = Lox.scanTokens(source);
+        const scanner = new scanner_1.Scanner(source);
+        const tokens = scanner.scanTokens();
         const parser = new parser_1.Parser(tokens);
         const expression = parser.parse();
         if (this.hadError || expression === null)

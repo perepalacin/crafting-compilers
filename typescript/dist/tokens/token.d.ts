@@ -4,10 +4,10 @@ export declare class Token {
     private lexeme;
     private literal;
     private line;
-    constructor(type: TokenType, lexeme: string, literal: object | null, line: number);
+    constructor(type: TokenType, lexeme: string, literal: unknown, line: number);
     toString(): string;
     getLexeme(): string;
     getType(): TokenType;
-    getLiteral(): object | null;
+    getLiteral(): unknown;
     getLine(): number;
 }

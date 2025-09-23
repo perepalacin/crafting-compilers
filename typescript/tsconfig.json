@@ -2,7 +2,6 @@
     "compilerOptions": {
         "strict": true,
         "alwaysStrict": true,
-        "baseUrl": "./src",
         "declaration": true,
         "removeComments": true,
         "emitDecoratorMetadata": true,
@@ -16,8 +15,14 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "incremental": true,
+        "baseUrl": ".",
         "outDir": "./dist",
-        "paths": {},
+        "paths": {
+            "@/*": ["src/*"],
+            "expression/*": ["expression/*"],
+            "parser/*": ["parser/*"],
+            "tokens/*": ["tokens/*"]
+        },
         "skipLibCheck": true,
         "strictBindCallApply": false,
         "strictFunctionTypes": true,
@@ -28,5 +33,6 @@
         "module": "NodeNext", // Change this to commonjs if we are using nest or vite.
         "moduleResolution": "NodeNext", // Remove this if we are using nest or vite.
         "typeRoots": ["./node_modules/@types"]
-    }
+    },
+    "include": ["src/**/*"]
 }

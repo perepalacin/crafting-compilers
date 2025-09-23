@@ -1,19 +1,26 @@
-import { AstPrinter } from "expression/ast-printer";
+import { RuntimeError } from "@/exceptions/runtime-exception";
+import { AstPrinter } from "@/expression/ast-printer";
+import { Interpreter } from "@/interpreter/interpreter";
+import { Parser } from "@/parser/parser";
+import { Scanner } from "@/scanner/scanner";
+import { Token } from "@/tokens/token";
+import { TokenType } from "@/tokens/token-type";
 import fs from "node:fs";
 import process from "node:process";
 import * as readline from "node:readline/promises";
-import { Parser } from "parser/parser";
-import { Token } from "tokens/token";
-import { TokenType } from "tokens/token-type";
 
 export class Lox {
+    private static interpreter = new Interpreter();
     private static hadError: boolean = false;
+    private static hadRuntimeError: boolean = false;
 
     private static runFile(path: string): void {
         const bytes: Buffer = fs.readFileSync(path);
         Lox.run(bytes.toString());
         if (Lox.hadError) {
             return process.exit(65);
+        } else if (Lox.hadRuntimeError) {
+            return process.exit(70);
         }
     }
 
@@ -31,18 +38,15 @@ export class Lox {
         }
     }
 
-    private static scanTokens(_source: string): Token[] {
-        return [];
-        // const tokens = source.split(/\s+/).filter(token => token.length > 0);
-        // return tokens.map(lexeme => new Token());
-    }
-
     private static run(source: string): void {
-        const tokens: Token[] = Lox.scanTokens(source);
+        const scanner = new Scanner(source);
+        const tokens: Token[] = scanner.scanTokens();
 
+        // The rest of your code to pass tokens to the parser remains the same
         const parser: Parser = new Parser(tokens);
         const expression = parser.parse();
         if (this.hadError || expression === null) return;
+        Lox.interpreter.interpret(expression);
         console.log(new AstPrinter().print(expression));
     }
 
@@ -73,6 +77,11 @@ export class Lox {
         } else {
             this.runPrompt();
         }
+    }
+
+    public static runtimeError(error: RuntimeError): void {
+        console.error(error.getMessage() + "\n[line " + error.getToken().getLine() + "]");
+        Lox.hadRuntimeError = true;
     }
 }
 

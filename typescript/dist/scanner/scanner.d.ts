@@ -1,4 +1,4 @@
-import { Token } from "tokens/token";
+import { Token } from "../tokens/token";
 export declare class Scanner {
     private source;
     private tokens;

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Parser = void 0;
-const main_1 = require("main");
-const token_type_1 = require("tokens/token-type");
 const expr_1 = require("../expression/expr");
+const main_1 = require("../main");
+const token_type_1 = require("../tokens/token-type");
 const parse_error_1 = require("./parse-error");
 class Parser {
     tokens;
@@ -16,7 +16,7 @@ class Parser {
             return this.expression();
         }
         catch (error) {
-            console.error(error);
+            console.error("There was an error parsing lox code related to its typescript implementation: ", error);
             return null;
         }
     }

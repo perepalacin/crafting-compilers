@@ -1,7 +1,7 @@
-import { Lox } from "main";
-import { Token } from "tokens/token";
-import { TokenType } from "tokens/token-type";
-import { Binary, Expr, Grouping, Literal, Unary } from "../expression/expr";
+import { Binary, Expr, Grouping, Literal, Unary } from "@/expression/expr";
+import { Lox } from "@/main";
+import { Token } from "@/tokens/token";
+import { TokenType } from "@/tokens/token-type";
 import { ParseError } from "./parse-error";
 
 export class Parser {
@@ -16,7 +16,7 @@ export class Parser {
         try {
             return this.expression();
         } catch (error) {
-            console.error(error);
+            console.error("There was an error parsing lox code related to its typescript implementation: ", error);
             return null;
         }
     }
@@ -117,7 +117,6 @@ export class Parser {
         if (this.isAtEnd()) return false;
         return this.peek().getType() === type;
     }
-
     private isAtEnd(): boolean {
         return this.peek().getType() === TokenType.EOF;
     }

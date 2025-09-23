@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scanner = void 0;
-const main_1 = require("main");
-const token_1 = require("tokens/token");
-const token_type_1 = require("tokens/token-type");
+const main_1 = require("../main");
+const token_1 = require("../tokens/token");
+const token_type_1 = require("../tokens/token-type");
 class Scanner {
     source;
     tokens;

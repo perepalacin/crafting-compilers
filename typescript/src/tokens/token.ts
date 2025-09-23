@@ -3,10 +3,10 @@ import { TokenType } from "./token-type";
 export class Token {
     private type: TokenType;
     private lexeme: string;
-    private literal: object | null;
+    private literal: unknown;
     private line: number;
 
-    public constructor(type: TokenType, lexeme: string, literal: object | null, line: number) {
+    public constructor(type: TokenType, lexeme: string, literal: unknown, line: number) {
         this.type = type;
         this.lexeme = lexeme;
         this.literal = literal;
@@ -25,7 +25,7 @@ export class Token {
         return this.type;
     }
 
-    public getLiteral(): object | null {
+    public getLiteral(): unknown {
         return this.literal;
     }
 

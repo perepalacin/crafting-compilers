@@ -1,5 +1,5 @@
-import { Token } from "tokens/token";
 import { Expr } from "../expression/expr";
+import { Token } from "../tokens/token";
 export declare class Parser {
     private tokens;
     private current;

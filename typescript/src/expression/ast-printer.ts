@@ -1,4 +1,4 @@
-import { Binary, Expr, Grouping, Literal, Unary, Visitor } from "./expr";
+import { Binary, Expr, Grouping, Literal, Unary, Visitor } from "@/expression/expr";
 
 export class AstPrinter implements Visitor<string> {
     public print(expr: Expr): string {

@@ -1,5 +1,6 @@
 import { Binary, Expr, Grouping, Literal, Unary } from "@/expression/expr";
 import { Lox } from "@/main";
+import { Stmt, StmtExpression, StmtPrint } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 import { ParseError } from "./parse-error";
@@ -12,17 +13,38 @@ export class Parser {
         this.tokens = tokens;
     }
 
-    public parse(): Expr | null {
+    public parse(): Stmt[] {
+        const statements: Stmt[] = [];
         try {
-            return this.expression();
+            while (!this.isAtEnd()) {
+                statements.push(this.statement());
+            }
         } catch (error) {
             console.error("There was an error parsing lox code related to its typescript implementation: ", error);
-            return null;
         }
+        return statements;
     }
 
     private expression(): Expr {
         return this.equality();
+    }
+
+    private statement(): Stmt {
+        if (this.match(TokenType.PRINT)) return this.printStatement();
+
+        return this.expressionStatement();
+    }
+
+    private printStatement(): Stmt {
+        const value: Expr = this.expression();
+        this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
+        return new StmtPrint(value);
+    }
+
+    private expressionStatement(): Stmt {
+        const expr: Expr = this.expression();
+        this.consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new StmtExpression(expr);
     }
 
     private equality(): Expr {

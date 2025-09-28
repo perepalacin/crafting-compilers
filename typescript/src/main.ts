@@ -41,10 +41,8 @@ export class Lox {
         const scanner = new Scanner(source);
         const tokens: Token[] = scanner.scanTokens();
         const parser: Parser = new Parser(tokens);
-        console.log(parser);
         const interpreter = new Interpreter();
         const statements: Stmt[] = parser.parse();
-        console.log(statements);
         if (this.hadError || statements === null) return;
         interpreter.interpret(statements);
     }

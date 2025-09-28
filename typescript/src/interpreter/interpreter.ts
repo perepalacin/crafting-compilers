@@ -14,8 +14,10 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         } catch (error) {
             if (error instanceof RuntimeError) {
                 Lox.runtimeError(error);
+                return;
             } else {
                 console.error(error);
+                return;
             }
         }
     }

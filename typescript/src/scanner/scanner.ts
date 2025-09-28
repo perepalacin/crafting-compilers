@@ -13,22 +13,22 @@ export class Scanner {
 
     static {
         Scanner.keywords = {};
-        Scanner.keywords.and = TokenType.AND;
-        Scanner.keywords.class = TokenType.CLASS;
-        Scanner.keywords.else = TokenType.ELSE;
-        Scanner.keywords.false = TokenType.FALSE;
-        Scanner.keywords.for = TokenType.FOR;
-        Scanner.keywords.fun = TokenType.FUN;
-        Scanner.keywords.if = TokenType.IF;
-        Scanner.keywords.nil = TokenType.NIL;
-        Scanner.keywords.or = TokenType.OR;
-        Scanner.keywords.print = TokenType.PRINT;
-        Scanner.keywords.return = TokenType.RETURN;
-        Scanner.keywords.super = TokenType.SUPER;
-        Scanner.keywords.this = TokenType.THIS;
-        Scanner.keywords.true = TokenType.TRUE;
-        Scanner.keywords.var = TokenType.VAR;
-        Scanner.keywords.while = TokenType.WHILE;
+        Scanner.keywords["and"] = TokenType.AND;
+        Scanner.keywords["class"] = TokenType.CLASS;
+        Scanner.keywords["else"] = TokenType.ELSE;
+        Scanner.keywords["false"] = TokenType.FALSE;
+        Scanner.keywords["for"] = TokenType.FOR;
+        Scanner.keywords["fun"] = TokenType.FUN;
+        Scanner.keywords["if"] = TokenType.IF;
+        Scanner.keywords["nil"] = TokenType.NIL;
+        Scanner.keywords["or"] = TokenType.OR;
+        Scanner.keywords["print"] = TokenType.PRINT;
+        Scanner.keywords["return"] = TokenType.RETURN;
+        Scanner.keywords["super"] = TokenType.SUPER;
+        Scanner.keywords["this"] = TokenType.THIS;
+        Scanner.keywords["true"] = TokenType.TRUE;
+        Scanner.keywords["var"] = TokenType.VAR;
+        Scanner.keywords["while"] = TokenType.WHILE;
     }
 
     public constructor(source: string) {
@@ -129,8 +129,7 @@ export class Scanner {
     }
 
     private isDigit(c: string): boolean {
-        const num = Number(c);
-        return !Number.isNaN(num) && num >= 0 && num <= 9;
+        return c >= "0" && c <= "9";
     }
 
     private isAlphaNumeric(c: string): boolean {
@@ -140,7 +139,6 @@ export class Scanner {
     private handleIdentifier(): void {
         while (this.isAlphaNumeric(this.peek())) this.advance();
         const text: string = this.source.substring(this.start, this.current);
-        this.addToken(TokenType.IDENTIFIER);
         let type: TokenType = Scanner.keywords[text];
         if (type == null) type = TokenType.IDENTIFIER;
         this.addToken(type);

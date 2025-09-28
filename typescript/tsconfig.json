@@ -18,10 +18,7 @@
         "baseUrl": ".",
         "outDir": "./dist",
         "paths": {
-            "@/*": ["src/*"],
-            "expression/*": ["expression/*"],
-            "parser/*": ["parser/*"],
-            "tokens/*": ["tokens/*"]
+            "@/*": ["src/*"]
         },
         "skipLibCheck": true,
         "strictBindCallApply": false,

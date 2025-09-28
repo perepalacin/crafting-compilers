@@ -1,5 +1,5 @@
-import { Binary, Expr, Grouping, Literal, Unary, Visitor } from "./expr";
-export declare class AstPrinter implements Visitor<string> {
+import { Binary, Expr, ExprVisitor, Grouping, Literal, Unary } from "../expression/expr";
+export declare class AstPrinter implements ExprVisitor<string> {
     print(expr: Expr): string;
     visitBinaryExpr(expr: Binary): string;
     visitGroupingExpr(expr: Grouping): string;

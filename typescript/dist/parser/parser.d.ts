@@ -1,11 +1,14 @@
-import { Expr } from "../expression/expr";
+import { Stmt } from "../statement/Stmt";
 import { Token } from "../tokens/token";
 export declare class Parser {
     private tokens;
     private current;
     constructor(tokens: Token[]);
-    parse(): Expr | null;
+    parse(): Stmt[];
     private expression;
+    private statement;
+    private printStatement;
+    private expressionStatement;
     private equality;
     private comparison;
     private term;

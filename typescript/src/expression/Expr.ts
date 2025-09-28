@@ -2,7 +2,7 @@
 
 import { Token } from "@/tokens/token";
 
-export interface Visitor<R> {
+export interface ExprVisitor<R> {
     visitBinaryExpr(expr: Binary): R;
     visitGroupingExpr(expr: Grouping): R;
     visitLiteralExpr(expr: Literal): R;
@@ -10,7 +10,7 @@ export interface Visitor<R> {
 }
 
 export abstract class Expr {
-    abstract accept<R>(visitor: Visitor<R>): R;
+    abstract accept<R>(visitor: ExprVisitor<R>): R;
 }
 
 export class Binary extends Expr {
@@ -22,7 +22,7 @@ export class Binary extends Expr {
         super();
     }
 
-    accept<R>(visitor: Visitor<R>): R {
+    accept<R>(visitor: ExprVisitor<R>): R {
         return visitor.visitBinaryExpr(this);
     }
 }
@@ -31,7 +31,7 @@ export class Grouping extends Expr {
         super();
     }
 
-    accept<R>(visitor: Visitor<R>): R {
+    accept<R>(visitor: ExprVisitor<R>): R {
         return visitor.visitGroupingExpr(this);
     }
 }
@@ -41,7 +41,7 @@ export class Literal extends Expr {
         super();
     }
 
-    accept<R>(visitor: Visitor<R>): R {
+    accept<R>(visitor: ExprVisitor<R>): R {
         return visitor.visitLiteralExpr(this);
     }
 }
@@ -53,7 +53,7 @@ export class Unary extends Expr {
         super();
     }
 
-    accept<R>(visitor: Visitor<R>): R {
+    accept<R>(visitor: ExprVisitor<R>): R {
         return visitor.visitUnaryExpr(this);
     }
 }

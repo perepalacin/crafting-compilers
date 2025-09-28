@@ -1,8 +1,8 @@
 import { RuntimeError } from "@/exceptions/runtime-exception";
-import { AstPrinter } from "@/expression/ast-printer";
 import { Interpreter } from "@/interpreter/interpreter";
 import { Parser } from "@/parser/parser";
 import { Scanner } from "@/scanner/scanner";
+import { Stmt } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 import fs from "node:fs";
@@ -10,7 +10,6 @@ import process from "node:process";
 import * as readline from "node:readline/promises";
 
 export class Lox {
-    private static interpreter = new Interpreter();
     private static hadError: boolean = false;
     private static hadRuntimeError: boolean = false;
 
@@ -41,13 +40,13 @@ export class Lox {
     private static run(source: string): void {
         const scanner = new Scanner(source);
         const tokens: Token[] = scanner.scanTokens();
-
-        // The rest of your code to pass tokens to the parser remains the same
         const parser: Parser = new Parser(tokens);
-        const expression = parser.parse();
-        if (this.hadError || expression === null) return;
-        Lox.interpreter.interpret(expression);
-        console.log(new AstPrinter().print(expression));
+        console.log(parser);
+        const interpreter = new Interpreter();
+        const statements: Stmt[] = parser.parse();
+        console.log(statements);
+        if (this.hadError || statements === null) return;
+        interpreter.interpret(statements);
     }
 
     public static error(lineOrToken: number | Token, message: string): void {

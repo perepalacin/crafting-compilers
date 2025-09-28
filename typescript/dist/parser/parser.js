@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Parser = void 0;
 const expr_1 = require("../expression/expr");
 const main_1 = require("../main");
+const Stmt_1 = require("../statement/Stmt");
 const token_type_1 = require("../tokens/token-type");
 const parse_error_1 = require("./parse-error");
 class Parser {
@@ -12,16 +13,34 @@ class Parser {
         this.tokens = tokens;
     }
     parse() {
+        const statements = [];
         try {
-            return this.expression();
+            while (!this.isAtEnd()) {
+                statements.push(this.statement());
+            }
         }
         catch (error) {
             console.error("There was an error parsing lox code related to its typescript implementation: ", error);
-            return null;
         }
+        return statements;
     }
     expression() {
         return this.equality();
+    }
+    statement() {
+        if (this.match(token_type_1.TokenType.PRINT))
+            return this.printStatement();
+        return this.expressionStatement();
+    }
+    printStatement() {
+        const value = this.expression();
+        this.consume(token_type_1.TokenType.SEMICOLON, "Expect ';' after value.");
+        return new Stmt_1.StmtPrint(value);
+    }
+    expressionStatement() {
+        const expr = this.expression();
+        this.consume(token_type_1.TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new Stmt_1.StmtExpression(expr);
     }
     equality() {
         let expr = this.comparison();

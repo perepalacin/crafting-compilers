@@ -4,9 +4,12 @@
     "private": false,
     "repository": "https://github.com/perepalacin/crafting-compilers",
     "author": "Pere Palacín",
+    "_moduleAliases": {
+        "@/": "dist/"
+    },
     "scripts": {
-        "build": "npx tsc",
-        "start": "node ./dist/main.js",
+        "build": "npx tsc && npx tsc-alias",
+        "start": "node --trace-warnings ./dist/main.js",
         "dev": "npm run build && npm run start",
         "lint": "npx eslint 'src/**/*.{js,ts}' && tsc --noemit",
         "pretty": "npx prettier --write",
@@ -25,6 +28,7 @@
         "eslint-plugin-promise": "7.2.1",
         "prettier": "^3.6.2",
         "prettier-plugin-organize-imports": "^4.2.0",
+        "tsc-alias": "^1.8.16",
         "typescript-eslint": "8.43.0"
     }
 }

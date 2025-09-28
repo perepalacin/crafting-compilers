@@ -1,14 +1,16 @@
 import { RuntimeError } from "@/exceptions/runtime-exception";
-import { Binary, Expr, Grouping, Literal, Unary, Visitor } from "@/expression/expr";
+import { Binary, Expr, ExprVisitor, Grouping, Literal, Unary } from "@/expression/expr";
 import { Lox } from "@/main";
+import { Stmt, StmtExpression, StmtPrint, StmtVisitor } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 
-export class Interpreter implements Visitor<unknown> {
-    public interpret(expression: Expr): void {
+export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
+    public interpret(statements: Stmt[]): void {
         try {
-            const value: unknown = this.evaluate(expression);
-            console.log(this.stringify(value));
+            for (const statement of statements) {
+                this.execute(statement);
+            }
         } catch (error) {
             if (error instanceof RuntimeError) {
                 Lox.runtimeError(error);
@@ -16,6 +18,10 @@ export class Interpreter implements Visitor<unknown> {
                 console.error(error);
             }
         }
+    }
+
+    private execute(stmt: Stmt): void {
+        stmt.accept(this);
     }
 
     public visitLiteralExpr(expr: Literal): unknown {
@@ -133,5 +139,16 @@ export class Interpreter implements Visitor<unknown> {
             return text;
         }
         return object.toString();
+    }
+
+    public visitExpressionStmt(stmt: StmtExpression): void {
+        this.evaluate(stmt.expression);
+        return;
+    }
+
+    public visitPrintStmt(stmt: StmtPrint): void {
+        const value: unknown = this.evaluate(stmt.expression);
+        console.log(this.stringify(value));
+        return;
     }
 }

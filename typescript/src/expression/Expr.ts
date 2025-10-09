@@ -3,14 +3,29 @@
 import { Token } from "@/tokens/token";
 
 export interface ExprVisitor<R> {
+    visitAssignExpr(expr: Assign): R;
     visitBinaryExpr(expr: Binary): R;
     visitGroupingExpr(expr: Grouping): R;
     visitLiteralExpr(expr: Literal): R;
     visitUnaryExpr(expr: Unary): R;
+    visitVariable(expr: Variable): R;
 }
 
 export abstract class Expr {
     abstract accept<R>(visitor: ExprVisitor<R>): R;
+}
+
+export class Assign extends Expr {
+    constructor(
+        public readonly name: Token,
+        public readonly value: Expr,
+    ) {
+        super();
+    }
+
+    accept<R>(visitor: ExprVisitor<R>): R {
+        return visitor.visitAssignExpr(this);
+    }
 }
 
 export class Binary extends Expr {
@@ -26,6 +41,7 @@ export class Binary extends Expr {
         return visitor.visitBinaryExpr(this);
     }
 }
+
 export class Grouping extends Expr {
     constructor(public readonly expression: Expr) {
         super();
@@ -55,5 +71,14 @@ export class Unary extends Expr {
 
     accept<R>(visitor: ExprVisitor<R>): R {
         return visitor.visitUnaryExpr(this);
+    }
+}
+export class Variable extends Expr {
+    constructor(public readonly name: Token) {
+        super();
+    }
+
+    accept<R>(visitor: ExprVisitor<R>): R {
+        return visitor.visitVariable(this);
     }
 }

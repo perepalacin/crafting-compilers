@@ -1,8 +1,12 @@
-import { Binary, Expr, ExprVisitor, Grouping, Literal, Unary } from "@/expression/expr";
+import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Unary, Variable } from "@/expression/expr";
 
 export class AstPrinter implements ExprVisitor<string> {
     public print(expr: Expr): string {
         return expr.accept(this);
+    }
+
+    public visitAssignExpr(expr: Assign): string {
+        return expr.name.getLexeme();
     }
 
     public visitBinaryExpr(expr: Binary): string {
@@ -20,6 +24,10 @@ export class AstPrinter implements ExprVisitor<string> {
 
     public visitUnaryExpr(expr: Unary): string {
         return this.parenthesize(expr.operator.toString(), expr.right);
+    }
+
+    public visitVariable(expr: Variable): string {
+        return expr.name.getLexeme();
     }
 
     private parenthesize(name: string, ...exprs: Expr[]): string {

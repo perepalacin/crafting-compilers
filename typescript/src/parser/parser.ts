@@ -1,6 +1,6 @@
-import { Binary, Expr, Grouping, Literal, Unary } from "@/expression/expr";
+import { Assign, Binary, Expr, Grouping, Literal, Unary, Variable } from "@/expression/expr";
 import { Lox } from "@/main";
-import { Stmt, StmtExpression, StmtPrint } from "@/statement/Stmt";
+import { Stmt, StmtExpression, StmtPrint, StmtVar } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 import { ParseError } from "./parse-error";
@@ -15,18 +15,53 @@ export class Parser {
 
     public parse(): Stmt[] {
         const statements: Stmt[] = [];
-        try {
-            while (!this.isAtEnd()) {
-                statements.push(this.statement());
-            }
-        } catch (error) {
-            console.error("There was an error parsing lox code related to its typescript implementation: ", error);
+        while (!this.isAtEnd()) {
+            const newStatement = this.declaration();
+            if (newStatement) statements.push(newStatement);
         }
         return statements;
     }
 
+    private declaration(): Stmt | null {
+        try {
+            if (this.match(TokenType.VAR)) return this.varDeclaration();
+            return this.statement();
+        } catch (error) {
+            if (error instanceof ParseError) {
+                this.synchronize();
+            } else {
+                console.debug("something is wrong with my implementation");
+            }
+            return null;
+        }
+    }
+
+    private varDeclaration(): Stmt {
+        const name: Token = this.consume(TokenType.IDENTIFIER, "Expect variable name.");
+        let initializer: Expr | null = null;
+        if (this.match(TokenType.EQUAL)) {
+            initializer = this.expression();
+        }
+        this.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+        return new StmtVar(name, initializer);
+    }
+
     private expression(): Expr {
-        return this.equality();
+        return this.assignment();
+    }
+
+    private assignment(): Expr {
+        let expr: Expr = this.equality();
+        if (this.match(TokenType.EQUAL)) {
+            const equals: Token = this.previous();
+            let value: Expr = this.assignment();
+            if (expr instanceof Variable) {
+                const name: Token = expr.name;
+                return new Assign(name, value);
+            }
+            Lox.error(equals, "Invalid assignment target.");
+        }
+        return expr;
     }
 
     private statement(): Stmt {
@@ -106,6 +141,10 @@ export class Parser {
             return new Literal(this.previous().getLiteral());
         }
 
+        if (this.match(TokenType.IDENTIFIER)) {
+            return new Variable(this.previous());
+        }
+
         if (this.match(TokenType.LEFT_PAREN)) {
             const expr: Expr = this.expression();
             this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
@@ -156,24 +195,24 @@ export class Parser {
         return new ParseError();
     }
 
-    // private synchronize(): void {
-    //     this.advance();
-    //     while (!this.isAtEnd()) {
-    //         if (this.previous().getType() === TokenType.SEMICOLON) return;
+    private synchronize(): void {
+        this.advance();
+        while (!this.isAtEnd()) {
+            if (this.previous().getType() === TokenType.SEMICOLON) return;
 
-    //         switch (this.peek().getType()) {
-    //             case TokenType.CLASS:
-    //             case TokenType.FUN:
-    //             case TokenType.IF:
-    //             case TokenType.FOR:
-    //             case TokenType.WHILE:
-    //             case TokenType.RETURN:
-    //             case TokenType.IDENTIFIER:
-    //             case TokenType.VAR:
-    //             case TokenType.PRINT:
-    //                 return;
-    //         }
-    //         this.advance();
-    //     }
-    // }
+            switch (this.peek().getType()) {
+                case TokenType.CLASS:
+                case TokenType.FUN:
+                case TokenType.IF:
+                case TokenType.FOR:
+                case TokenType.WHILE:
+                case TokenType.RETURN:
+                case TokenType.IDENTIFIER:
+                case TokenType.VAR:
+                case TokenType.PRINT:
+                    return;
+            }
+            this.advance();
+        }
+    }
 }

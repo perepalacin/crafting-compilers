@@ -15,7 +15,8 @@ export class Lox {
 
     private static runFile(path: string): void {
         const bytes: Buffer = fs.readFileSync(path);
-        Lox.run(bytes.toString());
+        const interpreter = new Interpreter();
+        Lox.run(bytes.toString(), interpreter);
         if (Lox.hadError) {
             return process.exit(65);
         } else if (Lox.hadRuntimeError) {
@@ -24,6 +25,7 @@ export class Lox {
     }
 
     private static async runPrompt(): Promise<void> {
+        const interpreter = new Interpreter();
         const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout,
@@ -32,16 +34,14 @@ export class Lox {
         for (;;) {
             const line = await rl.question("> ");
             if (line === null) break;
-            Lox.run(line);
-            Lox.hadError = true;
+            Lox.run(line, interpreter);
         }
     }
 
-    private static run(source: string): void {
+    private static run(source: string, interpreter: Interpreter): void {
         const scanner = new Scanner(source);
         const tokens: Token[] = scanner.scanTokens();
         const parser: Parser = new Parser(tokens);
-        const interpreter = new Interpreter();
         const statements: Stmt[] = parser.parse();
         if (this.hadError || statements === null) return;
         interpreter.interpret(statements);

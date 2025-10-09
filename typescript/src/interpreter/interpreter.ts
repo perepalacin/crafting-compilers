@@ -1,11 +1,14 @@
+import { Environment } from "@/environment/environment";
 import { RuntimeError } from "@/exceptions/runtime-exception";
-import { Binary, Expr, ExprVisitor, Grouping, Literal, Unary } from "@/expression/expr";
+import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Unary, Variable } from "@/expression/expr";
 import { Lox } from "@/main";
-import { Stmt, StmtExpression, StmtPrint, StmtVisitor } from "@/statement/Stmt";
+import { Stmt, StmtExpression, StmtPrint, StmtVar, StmtVisitor } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 
 export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
+    private environment: Environment = new Environment();
+
     public interpret(statements: Stmt[]): void {
         try {
             for (const statement of statements) {
@@ -48,6 +51,10 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
                 return -Number(right);
         }
         return null;
+    }
+
+    public visitVariable(expr: Variable): unknown {
+        return this.environment.get(expr.name);
     }
 
     private checkNumberOperand(operator: Token, operand: unknown): void {
@@ -152,5 +159,20 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         const value: unknown = this.evaluate(stmt.expression);
         console.log(this.stringify(value));
         return;
+    }
+
+    public visitVarStmt(stmt: StmtVar): void {
+        let value: unknown = null;
+        if (stmt.initializer !== null) {
+            value = this.evaluate(stmt.initializer);
+        }
+        this.environment.define(stmt.name.getLexeme(), value);
+        return;
+    }
+
+    public visitAssignExpr(expr: Assign): unknown {
+        const value = this.evaluate(expr.value);
+        this.environment.assign(expr.name, expr.value);
+        return value;
     }
 }

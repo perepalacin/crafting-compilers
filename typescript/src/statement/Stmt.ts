@@ -6,8 +6,10 @@ import { Token } from "@/tokens/token";
 export interface StmtVisitor<R> {
     visitBlockStmt(stmt: StmtBlock): R;
     visitExpressionStmt(stmt: StmtExpression): R;
+    visitIfStmt(stmt: StmtIf): R;
     visitPrintStmt(stmt: StmtPrint): R;
     visitVarStmt(stmt: StmtVar): R;
+    visitWhileStmt(stmt: StmtWhile): R;
 }
 
 export abstract class Stmt {
@@ -34,6 +36,20 @@ export class StmtExpression extends Stmt {
     }
 }
 
+export class StmtIf extends Stmt {
+    constructor(
+        public readonly condition: Expr,
+        public readonly thenBranch: Stmt,
+        public readonly elseBranch?: Stmt,
+    ) {
+        super();
+    }
+
+    accept<R>(visitor: StmtVisitor<R>): R {
+        return visitor.visitIfStmt(this);
+    }
+}
+
 export class StmtPrint extends Stmt {
     constructor(public readonly expression: Expr) {
         super();
@@ -54,5 +70,18 @@ export class StmtVar extends Stmt {
 
     accept<R>(visitor: StmtVisitor<R>): R {
         return visitor.visitVarStmt(this);
+    }
+}
+
+export class StmtWhile extends Stmt {
+    constructor(
+        public readonly condition: Expr,
+        public readonly body: Stmt,
+    ) {
+        super();
+    }
+
+    accept<R>(visitor: StmtVisitor<R>): R {
+        return visitor.visitWhileStmt(this);
     }
 }

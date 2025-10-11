@@ -1,8 +1,8 @@
 import { Environment } from "@/environment/environment";
 import { RuntimeError } from "@/exceptions/runtime-exception";
-import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Unary, Variable } from "@/expression/expr";
+import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Logical, Unary, Variable } from "@/expression/expr";
 import { Lox } from "@/main";
-import { Stmt, StmtBlock, StmtExpression, StmtPrint, StmtVar, StmtVisitor } from "@/statement/Stmt";
+import { Stmt, StmtBlock, StmtExpression, StmtIf, StmtPrint, StmtVar, StmtVisitor, StmtWhile } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 
@@ -63,13 +63,13 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
     }
 
     private checkNumberOperand(operator: Token, operand: unknown): void {
-        if (operand instanceof Number) return;
+        if (typeof operand === "number") return;
         throw new RuntimeError(operator, "Operand must be a number.");
     }
 
     private isTruthy(object: unknown): boolean {
         if (object == null) return false;
-        if (object instanceof Boolean) return Boolean(object);
+        if (typeof object === "boolean") return Boolean(object);
         return true;
     }
 
@@ -97,10 +97,10 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
                 this.checkNumberOperands(expr.operator, left, right);
                 return Number(left) - Number(right);
             case TokenType.PLUS:
-                if (left instanceof Number && right instanceof Number) {
+                if ((typeof left === "number" || left instanceof Number) && (typeof right === "number" || right instanceof Number)) {
                     return Number(left) + Number(right);
                 }
-                if (left instanceof String && right instanceof String) {
+                if ((typeof left === "string" || left instanceof String) && (typeof right === "string" || right instanceof String)) {
                     return String(left) + String(right);
                 }
                 throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
@@ -115,8 +115,18 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         return null;
     }
 
+    public visitLogicalExpr(expr: Logical): unknown {
+        const left: unknown = this.evaluate(expr.left);
+        if (expr.operator.getType() == TokenType.OR) {
+            if (this.isTruthy(left)) return left;
+        } else {
+            if (!this.isTruthy(left)) return left;
+        }
+        return this.evaluate(expr.right);
+    }
+
     private checkNumberOperands(operator: Token, left: unknown, right: unknown): void {
-        if (left instanceof Number || right instanceof Number) return;
+        if ((typeof left === "number" || left instanceof Number) && (typeof right === "number" || right instanceof Number)) return;
         throw new RuntimeError(operator, "Operand must be a number.");
     }
 
@@ -145,7 +155,7 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
 
     private stringify(object: unknown): string {
         if (object == null) return "nil";
-        if (object instanceof Number) {
+        if (typeof object === "number") {
             let text: string = object.toString();
             if (text.endsWith(".0")) {
                 text = text.substring(0, text.length - 2);
@@ -166,6 +176,15 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         return;
     }
 
+    public visitIfStmt(stmt: StmtIf): void {
+        if (this.isTruthy(this.evaluate(stmt.condition))) {
+            this.execute(stmt.thenBranch);
+        } else if (stmt.elseBranch != null) {
+            this.execute(stmt.elseBranch);
+        }
+        return;
+    }
+
     public visitVarStmt(stmt: StmtVar): void {
         let value: unknown = null;
         if (stmt.initializer !== null) {
@@ -177,7 +196,7 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
 
     public visitAssignExpr(expr: Assign): unknown {
         const value = this.evaluate(expr.value);
-        this.environment.assign(expr.name, expr.value);
+        this.environment.assign(expr.name, value);
         return value;
     }
 
@@ -191,5 +210,12 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         } finally {
             this.environment = previous;
         }
+    }
+
+    public visitWhileStmt(stmt: StmtWhile): void {
+        while (this.isTruthy(this.evaluate(stmt.condition))) {
+            this.execute(stmt.body);
+        }
+        return;
     }
 }

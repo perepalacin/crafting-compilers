@@ -7,6 +7,7 @@ export interface ExprVisitor<R> {
     visitBinaryExpr(expr: Binary): R;
     visitGroupingExpr(expr: Grouping): R;
     visitLiteralExpr(expr: Literal): R;
+    visitLogicalExpr(expr: Logical): R;
     visitUnaryExpr(expr: Unary): R;
     visitVariable(expr: Variable): R;
 }
@@ -52,8 +53,7 @@ export class Grouping extends Expr {
     }
 }
 export class Literal extends Expr {
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    constructor(public readonly value: any) {
+    constructor(public readonly value: unknown) {
         super();
     }
 
@@ -61,6 +61,21 @@ export class Literal extends Expr {
         return visitor.visitLiteralExpr(this);
     }
 }
+
+export class Logical extends Expr {
+    constructor(
+        public readonly left: Expr,
+        public readonly operator: Token,
+        public readonly right: Expr,
+    ) {
+        super();
+    }
+
+    accept<R>(visitor: ExprVisitor<R>): R {
+        return visitor.visitLogicalExpr(this);
+    }
+}
+
 export class Unary extends Expr {
     constructor(
         public readonly operator: Token,

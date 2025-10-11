@@ -1,4 +1,4 @@
-import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Unary, Variable } from "@/expression/expr";
+import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Logical, Unary, Variable } from "@/expression/expr";
 
 export class AstPrinter implements ExprVisitor<string> {
     public print(expr: Expr): string {
@@ -18,8 +18,12 @@ export class AstPrinter implements ExprVisitor<string> {
     }
 
     public visitLiteralExpr(expr: Literal): string {
-        if (expr.value === null) return "nil";
+        if (expr.value === null || expr.value === undefined) return "nil";
         return expr.value.toString();
+    }
+
+    public visitLogicalExpr(expr: Logical): string {
+        return expr.accept(this);
     }
 
     public visitUnaryExpr(expr: Unary): string {

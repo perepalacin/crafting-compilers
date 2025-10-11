@@ -18,7 +18,7 @@ export class Environment {
     }
 
     public assign(name: Token, value: unknown): void {
-        if (Object.prototype.hasOwnProperty.call(this.values, name)) {
+        if (Object.prototype.hasOwnProperty.call(this.values, name.getLexeme())) {
             this.values[name.getLexeme()] = value;
             return;
         }
@@ -26,7 +26,7 @@ export class Environment {
             this.enclosing.assign(name, value);
             return;
         }
-        throw new RuntimeError(name, "Undefined variable '" + name + "'.");
+        throw new RuntimeError(name, "Undefined variable '" + name.getLexeme() + "'.");
     }
 
     public get(name: Token): unknown {
@@ -37,5 +37,9 @@ export class Environment {
         }
         if (this.enclosing !== null) return this.enclosing.get(name);
         throw new RuntimeError(name, "Undefined variable '" + name.getLexeme() + "'.");
+    }
+
+    public getEnclosing(): Environment | null {
+        return this.enclosing;
     }
 }

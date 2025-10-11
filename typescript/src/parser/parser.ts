@@ -1,6 +1,6 @@
-import { Assign, Binary, Expr, Grouping, Literal, Unary, Variable } from "@/expression/expr";
+import { Assign, Binary, Expr, Grouping, Literal, Logical, Unary, Variable } from "@/expression/expr";
 import { Lox } from "@/main";
-import { Stmt, StmtBlock, StmtExpression, StmtPrint, StmtVar } from "@/statement/Stmt";
+import { Stmt, StmtBlock, StmtExpression, StmtIf, StmtPrint, StmtVar, StmtWhile } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 import { ParseError } from "./parse-error";
@@ -51,7 +51,7 @@ export class Parser {
     }
 
     private assignment(): Expr {
-        let expr: Expr = this.equality();
+        let expr: Expr = this.or();
         if (this.match(TokenType.EQUAL)) {
             const equals: Token = this.previous();
             let value: Expr = this.assignment();
@@ -64,10 +64,80 @@ export class Parser {
         return expr;
     }
 
+    private or(): Expr {
+        let expr: Expr = this.and();
+        while (this.match(TokenType.OR)) {
+            const operator: Token = this.previous();
+            const right: Expr = this.and();
+            expr = new Logical(expr, operator, right);
+        }
+        return expr;
+    }
+
+    private and(): Expr {
+        let expr: Expr = this.equality();
+        while (this.match(TokenType.AND)) {
+            const operator: Token = this.previous();
+            const right: Expr = this.equality();
+            expr = new Logical(expr, operator, right);
+        }
+        return expr;
+    }
+
     private statement(): Stmt {
+        if (this.match(TokenType.FOR)) return this.forStatement();
+        if (this.match(TokenType.IF)) return this.ifStatement();
         if (this.match(TokenType.PRINT)) return this.printStatement();
+        if (this.match(TokenType.WHILE)) return this.whileStatement();
         if (this.match(TokenType.LEFT_BRACE)) return new StmtBlock(this.block());
         return this.expressionStatement();
+    }
+
+    private forStatement(): Stmt {
+        this.consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+        let initializer: Stmt | null;
+        if (this.match(TokenType.SEMICOLON)) {
+            initializer = null;
+        } else if (this.match(TokenType.VAR)) {
+            initializer = this.varDeclaration();
+        } else {
+            initializer = this.expressionStatement();
+        }
+
+        let condition: Expr | null = null;
+        if (!this.check(TokenType.SEMICOLON)) {
+            condition = this.expression();
+        }
+        this.consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+        let increment: Expr | null = null;
+        if (!this.check(TokenType.RIGHT_PAREN)) {
+            increment = this.expression();
+        }
+        this.consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+
+        let body = this.statement();
+
+        if (increment !== null) {
+            body = new StmtBlock([body, new StmtExpression(increment)]);
+        }
+
+        if (condition === null) condition = new Literal(true);
+        body = new StmtWhile(condition, body);
+
+        if (initializer != null) {
+            body = new StmtBlock([initializer, body]);
+        }
+
+        return body;
+    }
+
+    private whileStatement(): Stmt {
+        this.consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+        const condition = this.expression();
+        this.consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+        const body = this.statement();
+        return new StmtWhile(condition, body);
     }
 
     private block(): Stmt[] {
@@ -78,6 +148,18 @@ export class Parser {
         }
         this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
         return statements;
+    }
+
+    private ifStatement(): Stmt {
+        this.consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+        const condition = this.expression();
+        this.consume(TokenType.RIGHT_PAREN, "Expect ')' after 'if' condition.");
+        const thenBranch = this.statement();
+        let elseBranch: Stmt | undefined = undefined;
+        if (this.match(TokenType.ELSE)) {
+            elseBranch = this.statement();
+        }
+        return new StmtIf(condition, thenBranch, elseBranch);
     }
 
     private printStatement(): Stmt {

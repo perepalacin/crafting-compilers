@@ -2,7 +2,7 @@ import { Environment } from "@/environment/environment";
 import { RuntimeError } from "@/exceptions/runtime-exception";
 import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Unary, Variable } from "@/expression/expr";
 import { Lox } from "@/main";
-import { Stmt, StmtExpression, StmtPrint, StmtVar, StmtVisitor } from "@/statement/Stmt";
+import { Stmt, StmtBlock, StmtExpression, StmtPrint, StmtVar, StmtVisitor } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 
@@ -55,6 +55,11 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
 
     public visitVariable(expr: Variable): unknown {
         return this.environment.get(expr.name);
+    }
+
+    public visitBlockStmt(stmt: StmtBlock): void {
+        this.executeBlock(stmt.statements, new Environment(this.environment));
+        return;
     }
 
     private checkNumberOperand(operator: Token, operand: unknown): void {
@@ -174,5 +179,17 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         const value = this.evaluate(expr.value);
         this.environment.assign(expr.name, expr.value);
         return value;
+    }
+
+    private executeBlock(statements: Stmt[], environment: Environment): void {
+        const previous: Environment = this.environment;
+        try {
+            this.environment = environment;
+            for (const statement of statements) {
+                this.execute(statement);
+            }
+        } finally {
+            this.environment = previous;
+        }
     }
 }

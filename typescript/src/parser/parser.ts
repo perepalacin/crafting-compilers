@@ -1,6 +1,6 @@
 import { Assign, Binary, Expr, Grouping, Literal, Unary, Variable } from "@/expression/expr";
 import { Lox } from "@/main";
-import { Stmt, StmtExpression, StmtPrint, StmtVar } from "@/statement/Stmt";
+import { Stmt, StmtBlock, StmtExpression, StmtPrint, StmtVar } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 import { ParseError } from "./parse-error";
@@ -66,8 +66,18 @@ export class Parser {
 
     private statement(): Stmt {
         if (this.match(TokenType.PRINT)) return this.printStatement();
-
+        if (this.match(TokenType.LEFT_BRACE)) return new StmtBlock(this.block());
         return this.expressionStatement();
+    }
+
+    private block(): Stmt[] {
+        const statements: Stmt[] = [];
+        while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+            const statement = this.declaration();
+            if (statement) statements.push(statement);
+        }
+        this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+        return statements;
     }
 
     private printStatement(): Stmt {

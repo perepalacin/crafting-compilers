@@ -4,6 +4,7 @@ import { Expr } from "@/expression/expr";
 import { Token } from "@/tokens/token";
 
 export interface StmtVisitor<R> {
+    visitBlockStmt(stmt: StmtBlock): R;
     visitExpressionStmt(stmt: StmtExpression): R;
     visitPrintStmt(stmt: StmtPrint): R;
     visitVarStmt(stmt: StmtVar): R;
@@ -11,6 +12,16 @@ export interface StmtVisitor<R> {
 
 export abstract class Stmt {
     abstract accept<R>(visitor: StmtVisitor<R>): R;
+}
+
+export class StmtBlock extends Stmt {
+    constructor(public readonly statements: Stmt[]) {
+        super();
+    }
+
+    accept<R>(visitor: StmtVisitor<R>): R {
+        return visitor.visitBlockStmt(this);
+    }
 }
 
 export class StmtExpression extends Stmt {

@@ -1,6 +1,6 @@
 import { Assign, Binary, Call, Expr, Grouping, Literal, Logical, Unary, Variable } from "@/expression/expr";
 import { Lox } from "@/main";
-import { Stmt, StmtBlock, StmtExpression, StmtFunction, StmtIf, StmtPrint, StmtVar, StmtWhile } from "@/statement/Stmt";
+import { Stmt, StmtBlock, StmtExpression, StmtFunction, StmtIf, StmtPrint, StmtReturn, StmtVar, StmtWhile } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 import { ParseError } from "./parse-error";
@@ -108,9 +108,20 @@ export class Parser {
         if (this.match(TokenType.FOR)) return this.forStatement();
         if (this.match(TokenType.IF)) return this.ifStatement();
         if (this.match(TokenType.PRINT)) return this.printStatement();
+        if (this.match(TokenType.RETURN)) return this.returnStatement();
         if (this.match(TokenType.WHILE)) return this.whileStatement();
         if (this.match(TokenType.LEFT_BRACE)) return new StmtBlock(this.block());
         return this.expressionStatement();
+    }
+
+    private returnStatement(): Stmt {
+        const keyword: Token = this.previous();
+        let value: Expr | null = null;
+        if (!this.check(TokenType.SEMICOLON)) {
+            value = this.expression();
+        }
+        this.consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+        return new StmtReturn(keyword, value);
     }
 
     private forStatement(): Stmt {

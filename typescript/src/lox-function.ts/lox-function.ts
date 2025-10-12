@@ -1,6 +1,7 @@
 import { Environment } from "@/environment/environment";
 import { Interpreter } from "@/interpreter/interpreter";
 import { LoxCallable } from "@/lox-callable/lox-callable";
+import { Return } from "@/return/return";
 import { StmtFunction } from "@/statement/Stmt";
 
 export class LoxFunction implements LoxCallable {
@@ -16,7 +17,14 @@ export class LoxFunction implements LoxCallable {
             environment.define(this.declaration.params[i].getLexeme(), args[i]);
         }
 
-        interpreter.executeBlock(this.declaration.body, environment);
+        try {
+            interpreter.executeBlock(this.declaration.body, environment);
+        } catch (error) {
+            if (error instanceof Return) {
+                return error.getValue();
+            }
+            console.error("Something went wrong while executing the block");
+        }
         return null;
     }
 

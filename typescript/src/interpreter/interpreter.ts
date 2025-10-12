@@ -4,7 +4,19 @@ import { Assign, Binary, Call, Expr, ExprVisitor, Grouping, Literal, Logical, Un
 import { isLoxCallable, LoxCallable } from "@/lox-callable/lox-callable";
 import { LoxFunction } from "@/lox-function.ts/lox-function";
 import { Lox } from "@/main";
-import { Stmt, StmtBlock, StmtExpression, StmtFunction, StmtIf, StmtPrint, StmtVar, StmtVisitor, StmtWhile } from "@/statement/Stmt";
+import { Return } from "@/return/return";
+import {
+    Stmt,
+    StmtBlock,
+    StmtExpression,
+    StmtFunction,
+    StmtIf,
+    StmtPrint,
+    StmtReturn,
+    StmtVar,
+    StmtVisitor,
+    StmtWhile,
+} from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 
@@ -24,6 +36,11 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
                 return "<native clock fn>";
             },
         } satisfies LoxCallable);
+    }
+    visitReturnStmt(stmt: StmtReturn): void {
+        let value: unknown = null;
+        if (stmt.value !== null) value = this.evaluate(stmt.value);
+        throw new Return(value);
     }
 
     visitFunctionStatement(stmt: StmtFunction): void {

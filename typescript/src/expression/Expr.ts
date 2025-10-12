@@ -5,6 +5,7 @@ import { Token } from "@/tokens/token";
 export interface ExprVisitor<R> {
     visitAssignExpr(expr: Assign): R;
     visitBinaryExpr(expr: Binary): R;
+    visitCallExpr(expr: Call): R;
     visitGroupingExpr(expr: Grouping): R;
     visitLiteralExpr(expr: Literal): R;
     visitLogicalExpr(expr: Logical): R;
@@ -40,6 +41,20 @@ export class Binary extends Expr {
 
     accept<R>(visitor: ExprVisitor<R>): R {
         return visitor.visitBinaryExpr(this);
+    }
+}
+
+export class Call extends Expr {
+    constructor(
+        public readonly callee: Expr,
+        public readonly paren: Token,
+        public readonly args: Expr[],
+    ) {
+        super();
+    }
+
+    accept<R>(visitor: ExprVisitor<R>): R {
+        return visitor.visitCallExpr(this);
     }
 }
 

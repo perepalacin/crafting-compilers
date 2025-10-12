@@ -6,6 +6,7 @@ import { Token } from "@/tokens/token";
 export interface StmtVisitor<R> {
     visitBlockStmt(stmt: StmtBlock): R;
     visitExpressionStmt(stmt: StmtExpression): R;
+    visitFunctionStatement(stmt: StmtFunction): R;
     visitIfStmt(stmt: StmtIf): R;
     visitPrintStmt(stmt: StmtPrint): R;
     visitVarStmt(stmt: StmtVar): R;
@@ -33,6 +34,20 @@ export class StmtExpression extends Stmt {
 
     accept<R>(visitor: StmtVisitor<R>): R {
         return visitor.visitExpressionStmt(this);
+    }
+}
+
+export class StmtFunction extends Stmt {
+    constructor(
+        public readonly name: Token,
+        public readonly params: Token[],
+        public readonly body: Stmt[],
+    ) {
+        super();
+    }
+
+    accept<R>(visitor: StmtVisitor<R>): R {
+        return visitor.visitFunctionStatement(this);
     }
 }
 

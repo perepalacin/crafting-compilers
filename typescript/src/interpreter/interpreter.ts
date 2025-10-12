@@ -1,13 +1,40 @@
 import { Environment } from "@/environment/environment";
 import { RuntimeError } from "@/exceptions/runtime-exception";
-import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Logical, Unary, Variable } from "@/expression/expr";
+import { Assign, Binary, Call, Expr, ExprVisitor, Grouping, Literal, Logical, Unary, Variable } from "@/expression/expr";
+import { isLoxCallable, LoxCallable } from "@/lox-callable/lox-callable";
+import { LoxFunction } from "@/lox-function.ts/lox-function";
 import { Lox } from "@/main";
-import { Stmt, StmtBlock, StmtExpression, StmtIf, StmtPrint, StmtVar, StmtVisitor, StmtWhile } from "@/statement/Stmt";
+import { Stmt, StmtBlock, StmtExpression, StmtFunction, StmtIf, StmtPrint, StmtVar, StmtVisitor, StmtWhile } from "@/statement/Stmt";
 import { Token } from "@/tokens/token";
 import { TokenType } from "@/tokens/token-type";
 
 export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
-    private environment: Environment = new Environment();
+    private globals: Environment = new Environment();
+    private environment: Environment = this.globals;
+
+    constructor() {
+        this.globals.define("clock", {
+            arity: (): number => {
+                return 0;
+            },
+            call: (_interpreter: Interpreter, _args: unknown[]): number => {
+                return Date.now() / 1000;
+            },
+            toString: (): string => {
+                return "<native clock fn>";
+            },
+        } satisfies LoxCallable);
+    }
+
+    visitFunctionStatement(stmt: StmtFunction): void {
+        const func: LoxFunction = new LoxFunction(stmt);
+        this.environment.define(stmt.name.getLexeme(), func);
+        return;
+    }
+
+    public getGlobals(): Environment {
+        return this.globals;
+    }
 
     public interpret(statements: Stmt[]): void {
         try {
@@ -125,6 +152,26 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         return this.evaluate(expr.right);
     }
 
+    public visitCallExpr(expr: Call): unknown {
+        const callee = this.evaluate(expr.callee);
+        const args: unknown[] = [];
+
+        for (const argument of expr.args) {
+            args.push(this.evaluate(argument));
+        }
+
+        if (!isLoxCallable(callee)) {
+            throw new RuntimeError(expr.paren, "Can only call functions and classes.");
+        }
+
+        const func: LoxCallable = callee;
+
+        if (args.length != func.arity()) {
+            throw new RuntimeError(expr.paren, "Expected " + func.arity() + " arguments but got " + args.length + ".");
+        }
+        return func.call(this, args);
+    }
+
     private checkNumberOperands(operator: Token, left: unknown, right: unknown): void {
         if ((typeof left === "number" || left instanceof Number) && (typeof right === "number" || right instanceof Number)) return;
         throw new RuntimeError(operator, "Operand must be a number.");
@@ -200,7 +247,7 @@ export class Interpreter implements ExprVisitor<unknown>, StmtVisitor<void> {
         return value;
     }
 
-    private executeBlock(statements: Stmt[], environment: Environment): void {
+    public executeBlock(statements: Stmt[], environment: Environment): void {
         const previous: Environment = this.environment;
         try {
             this.environment = environment;

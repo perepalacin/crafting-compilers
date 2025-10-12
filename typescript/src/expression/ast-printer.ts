@@ -1,8 +1,12 @@
-import { Assign, Binary, Expr, ExprVisitor, Grouping, Literal, Logical, Unary, Variable } from "@/expression/expr";
+import { Assign, Binary, Call, Expr, ExprVisitor, Grouping, Literal, Logical, Unary, Variable } from "@/expression/expr";
 
 export class AstPrinter implements ExprVisitor<string> {
     public print(expr: Expr): string {
         return expr.accept(this);
+    }
+
+    public visitCallExpr(expr: Call): string {
+        return expr.callee.accept(this);
     }
 
     public visitAssignExpr(expr: Assign): string {

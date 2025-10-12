@@ -1,0 +1,86 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "editor.formatOnSaveMode": "file",
+    "files.autoSave": "onFocusChange",
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[java]": {
+        "editor.defaultFormatter": "redhat.java"
+    },
+    "local-history.maxDisplay": 16,
+    "eslint.format.enable": true,
+    "eslint.lintTask.enable": true,
+    "eslint.run": "onType",
+    "window.title": "${dirty}${activeEditorMedium}${separator}${remoteName}${separator}${profileName}",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**./hisotry/**": true,
+        "**/node_modules": true
+    },
+    "search.exclude": {
+        "./dist": true,
+        "**./hisotry/**": true,
+        "**./node_modules/**": true,
+        "*.tsbuildinfo": true
+    },
+    "editor.tabSize": 4,
+    "jest.runMode": {
+        "type": "on-demand"
+    },
+    "jest.shell": {
+        "path": "/bin/zsh",
+        "args": ["--login"]
+    },
+    "editor.semanticTokenColorCustomizations": {},
+    "prettier.useEditorConfig": false,
+    "prettier.useTabs": false,
+    "prettier.configPath": ".prettierrc.json",
+    "eslint.validate": ["javascript", "typescript"],
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "files.associations": {
+        "stdlib.h": "c",
+        "chunk.h": "c",
+        "common.h": "c",
+        "type_traits": "c",
+        "limits": "c",
+        "ratio": "c",
+        "tuple": "c",
+        "variant": "c",
+        "__bit_reference": "c",
+        "string": "c",
+        "memory.h": "c"
+    }
+}

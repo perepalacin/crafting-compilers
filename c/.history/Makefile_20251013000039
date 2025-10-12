@@ -1,0 +1,68 @@
+# --- Configuration ---
+TARGET := app
+CC := gcc
+CFLAGS := -Wall -Wextra -std=c99 
+LDFLAGS := 
+
+# --- Directory Setup ---
+SRC_DIR := src
+OBJ_DIR := obj
+
+# --- Source and Object Discovery ---
+
+# Find all .c files in src/ and ALL its subdirectories recursively
+# We use a pattern matching that includes the subfolders (e.g., src/chunk/chunk.c)
+SOURCES := $(shell find $(SRC_DIR) -name "*.c")
+
+# Convert source file list to object file list, preserving the subdirectory structure
+# Example: src/chunk/chunk.c -> obj/chunk/chunk.o
+OBJECTS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
+
+# Extract all unique directories containing source files (e.g., src/chunk, src/memory)
+# This is used to create the corresponding directories in the 'obj' folder.
+SOURCEDIRS := $(sort $(dir $(SOURCES)))
+OBJDIRS := $(patsubst $(SRC_DIR)%,$(OBJ_DIR)%,$(SOURCEDIRS))
+
+# --- Include Paths ---
+
+# Add the 'src' directory and ALL its subdirectories containing headers to the include path (-I)
+# This will handle include paths like #include "chunk/chunk.h" or #include "common/common.h"
+# If your includes use relative paths like #include "../common/common.h", this might not be strictly needed,
+# but it's good practice for the compiler to know where headers are.
+INCLUDE_DIRS := $(sort $(dir $(shell find $(SRC_DIR) -name "*.h")))
+CFLAGS += $(patsubst %,-I%,$(INCLUDE_DIRS))
+
+# --- Targets ---
+
+# Default target (builds everything)
+.PHONY: all
+all: $(OBJ_DIR) $(TARGET)
+
+# Create the OBJECT DIRECTORIES (e.g., obj/chunk, obj/memory)
+$(OBJ_DIR):
+	@mkdir -p $(OBJDIRS)
+
+# Rule to link object files into the final executable
+$(TARGET): $(OBJECTS)
+	@echo "Linking $@"
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+
+# Rule to compile each .c file into a .o file
+# The | $(OBJ_DIR) dependency ensures the object subdirectories are created first.
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	@echo "Compiling $<"
+	# Note: The $ (OBJ_DIR) target creates ALL necessary subdirectories
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Target to run the compiled executable
+.PHONY: run
+run: $(TARGET)
+	@echo "Running $(TARGET)..."
+	./$(TARGET)
+
+# Target to clean up generated files
+.PHONY: clean
+clean:
+	@echo "Cleaning up..."
+	@rm -f $(TARGET)
+	@rm -rf $(OBJ_DIR)

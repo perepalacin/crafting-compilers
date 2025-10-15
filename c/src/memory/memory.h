@@ -8,8 +8,8 @@
 
 #define GROW_ARRAY(type, pointer, oldCount, newCount) \
     (type *)reallocate(pointer,                       \
-                       sizeof(type) * (oldCount),     \
-                       sizeof(type) * (newCount))
+                       (oldCount) * sizeof(type),     \
+                       (newCount) * sizeof(type))
 
 #define FREE_ARRAY(type, pointer, oldCount) \
     reallocate(pointer, sizeof(type) * (oldCount), 0)

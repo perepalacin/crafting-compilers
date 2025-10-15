@@ -81,6 +81,8 @@
         "variant": "c",
         "__bit_reference": "c",
         "string": "c",
-        "memory.h": "c"
+        "memory.h": "c",
+        "debug.h": "c",
+        "value.h": "c"
     }
 }

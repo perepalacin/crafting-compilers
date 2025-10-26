@@ -83,6 +83,7 @@
         "string": "c",
         "memory.h": "c",
         "debug.h": "c",
-        "value.h": "c"
+        "value.h": "c",
+        "vm.h": "c"
     }
 }

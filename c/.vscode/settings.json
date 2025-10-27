@@ -84,6 +84,7 @@
         "memory.h": "c",
         "debug.h": "c",
         "value.h": "c",
-        "vm.h": "c"
+        "vm.h": "c",
+        "compiler.h": "c"
     }
 }

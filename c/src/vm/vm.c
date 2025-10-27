@@ -1,6 +1,7 @@
 #include "../common/common.h"
 #include "../debug/debug.h"
 #include "./vm.h"
+#include "../compiler/compiler.h"
 
 VM vm;
 
@@ -93,11 +94,10 @@ static InterpretResult run()
 }
 
 InterpretResult
-interpret(Chunk *chunk)
+interpret(const char *source)
 {
-    vm.chunk = chunk;
-    vm.ip = vm.chunk->code;
-    return run();
+    compiler(source);
+    return INTERPRET_OK;
 }
 
 void push(Value value)

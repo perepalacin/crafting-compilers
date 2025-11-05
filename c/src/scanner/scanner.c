@@ -123,7 +123,7 @@ static Token string()
         advance();
     }
 
-    if (isAtend())
+    if (isAtEnd())
     {
         return errorToken("Unterminated string.");
     }
@@ -201,6 +201,11 @@ static TokenType identifierType()
     return TOKEN_IDENTIFIER;
 }
 
+static bool isDigit(char c)
+{
+    return c >= '0' && c <= '9';
+}
+
 static Token identifier()
 {
     while (isAlpha(peek() || isDigit(peek())))
@@ -209,11 +214,6 @@ static Token identifier()
     }
 
     return makeToken(identifierType());
-}
-
-static bool isDigit(char c)
-{
-    return c >= '0' && c <= '9';
 }
 
 static Token number()

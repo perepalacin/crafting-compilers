@@ -85,6 +85,9 @@
         "debug.h": "c",
         "value.h": "c",
         "vm.h": "c",
-        "compiler.h": "c"
+        "compiler.h": "c",
+        "bitset": "c",
+        "__memory": "c",
+        "locale": "c"
     }
 }

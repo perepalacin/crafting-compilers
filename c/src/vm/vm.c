@@ -46,21 +46,17 @@ static InterpretResult run()
 {
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
-#define BINARY_OP(valueType, op)                                       \
-    do                                                                 \
-    {                                                                  \
-        if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1)))                \
-        {                                                              \
-            runtimeError("Operands must be numbers.");                 \
-            return INTERPRET_RUNTIME_ERROR;                            \
-        }                                                              \
-        double b = AS_NUMBER(peek(0));                                 \
-        double a = AS_NUMBER(peek(1));                                 \
-        double c = AS_NUMBER(peek(2));                                 \
-        printf("DEBUG: Performing %.2f %s %.2f %.2f\n", a, #op, b, c); \
-        double b_pop = AS_NUMBER(pop());                               \
-        double a_pop = AS_NUMBER(pop());                               \
-        push(valueType(a_pop op b_pop));                               \
+#define BINARY_OP(valueType, op)                        \
+    do                                                  \
+    {                                                   \
+        if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) \
+        {                                               \
+            runtimeError("Operands must be numbers.");  \
+            return INTERPRET_RUNTIME_ERROR;             \
+        }                                               \
+        double b = AS_NUMBER(pop());                    \
+        double a = AS_NUMBER(pop());                    \
+        push(valueType(a op b));                        \
     } while (false)
 
     for (;;)

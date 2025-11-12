@@ -4,6 +4,7 @@
 #include "../vm/vm.h"
 #include "../chunk/chunk.h"
 #include "../scanner/scanner.h"
+#include "../object/object.h"
 
 #ifdef DEBUG_PRINT_CODE
 #include "../debug/debug.h"

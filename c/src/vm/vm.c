@@ -6,11 +6,10 @@
 #include "../debug/debug.h"
 #include "../object/object.h"
 #include "../memory/memory.h"
-#include "./vm.h"
 #include "../compiler/compiler.h"
+#include "./vm.h"
 
 VM vm;
-
 static void resetStack()
 {
     vm.stackTop = vm.stack;
@@ -19,10 +18,12 @@ static void resetStack()
 void initVM()
 {
     resetStack();
+    vm.objects = NULL;
 }
 
 void freeVM()
 {
+    freeObjects();
 }
 
 static Value peek(int distance)
@@ -140,7 +141,7 @@ static InterpretResult run()
         }
         case OP_ADD:
         {
-            if (IS_STRING(peek(0) && IS_STRING(peek(1))))
+            if (IS_STRING(peek(0)) && IS_STRING(peek(1)))
             {
                 concatenate();
             }

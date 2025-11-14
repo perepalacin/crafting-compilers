@@ -8,12 +8,15 @@
 
 #define STACK_MAX 256
 
+extern VM vm;
+
 typedef struct
 {
     Chunk *chunk;
     uint8_t *ip;
     Value stack[STACK_MAX];
     Value *stackTop;
+    Obj *objects;
 } VM;
 
 typedef enum

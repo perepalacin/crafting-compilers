@@ -62,6 +62,7 @@ bool tableGet(Table *table, ObjString *key, Value *value)
 static void adjustCapacity(Table *table, int capacity)
 {
     Entry *entries = ALLOCATE(Entry, capacity);
+    table->count = 0;
     for (int i = 0; i < capacity; i++)
     {
         entries[i].key = NULL;
@@ -79,6 +80,7 @@ static void adjustCapacity(Table *table, int capacity)
         Entry *dest = findEntry(entries, capacity, entry->key);
         dest->key = entry->key;
         dest->value = entry->value;
+        table->count++;
     }
     FREE_ARRAY(Entry, table->entries, table->capacity);
     table->entries = entries;
@@ -96,12 +98,13 @@ bool tableSet(Table *table, ObjString *key, Value value)
     if (table->count + 1 > table->capacity * TABLE_MAX_LOAD)
     {
         int capacity = GROW_CAPACITY(table->capacity);
+        adjustCapacity(table, capacity);
     }
 
     Entry *entry = findEntry(table->entries, table->capacity, key);
 
     bool isNewKey = entry->key == NULL;
-    if (isNewKey)
+    if (isNewKey && IS_NIL(entry->value))
     {
         table->count++;
     }
@@ -138,5 +141,32 @@ void tableAddAll(Table *from, Table *to)
         {
             tableSet(to, entry->key, entry->value);
         }
+    }
+}
+
+ObjString *tableFindString(Table *table, const char *chars, int length, uint32_t hash)
+{
+    if (table->count == 0)
+    {
+        return NULL;
+    }
+
+    uint32_t index = hash % table->capacity;
+    for (;;)
+    {
+        Entry *entry = &table->entries[index];
+        if (entry->key == NULL)
+        {
+            if (IS_NIL(entry->value))
+            {
+                return NULL;
+            }
+        }
+        else if (entry->key->length == length && entry->key->hash == hash && memcmp(entry->key->chars, chars, length) == 0)
+        {
+            return entry->key;
+        }
+
+        index = (index + 1) % table->capacity;
     }
 }

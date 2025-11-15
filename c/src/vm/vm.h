@@ -5,10 +5,9 @@
 
 #include "../chunk/chunk.h"
 #include "../value/value.h"
+#include "../table/table.h"
 
 #define STACK_MAX 256
-
-extern VM vm;
 
 typedef struct
 {
@@ -16,6 +15,7 @@ typedef struct
     uint8_t *ip;
     Value stack[STACK_MAX];
     Value *stackTop;
+    Table strings;
     Obj *objects;
 } VM;
 
@@ -25,6 +25,8 @@ typedef enum
     INTERPRET_COMPILE_ERROR,
     INTERPRET_RUNTIME_ERROR,
 } InterpretResult;
+
+extern VM vm;
 
 void initVM();
 void freeVM();

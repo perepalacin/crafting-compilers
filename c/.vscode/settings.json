@@ -71,6 +71,8 @@
     "eslint.validate": ["javascript", "typescript"],
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "files.associations": {
+        "*.h": "c",
+        "*.c": "c",
         "stdlib.h": "c",
         "chunk.h": "c",
         "common.h": "c",
@@ -89,5 +91,19 @@
         "bitset": "c",
         "__memory": "c",
         "locale": "c"
-    }
+    },
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}",
+        "--background-index",
+        "--clang-tidy",
+        "--completion-style=detailed",
+        "--header-insertion=iwyu",
+        "--query-driver=/usr/bin/gcc"
+    ],
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, IndentWidth: 4, ColumnLimit: 100 }",
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+    "C_Cpp.default.intelliSenseMode": "macos-gcc-arm64"
 }

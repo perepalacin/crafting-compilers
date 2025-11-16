@@ -1,7 +1,11 @@
 # --- Configuration ---
 TARGET := app
 CC := gcc
-CFLAGS := -Wall -Wextra -std=c99 
+CFLAGS := -Wall -Wextra -Wpedantic -std=c99 \
+          -Wunused -Wuninitialized -Wmissing-prototypes \
+          -Wstrict-prototypes -Wimplicit-function-declaration \
+          -Wreturn-type -Wshadow -Wpointer-arith \
+          -Wcast-qual -Wwrite-strings
 LDFLAGS := 
 
 # --- Directory Setup ---
@@ -36,10 +40,11 @@ $(TARGET): $(OBJECTS)
 	@echo "Linking $@"
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
-# Rule to create all necessary object subdirectories before compilation starts
-# This target is a prerequisite for all object files
-$(OBJDIRS):
-	@mkdir -p $@
+# Rule to compile each .c file into a .o file
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	@echo "Compiling $<"
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Rule to compile each .c file into a .o file
 # It now depends on the specific object directory being created first.

@@ -5,12 +5,15 @@
 #include "../memory/memory.h"
 #include "../value/value.h"
 
-typedef enum
-{
+typedef enum {
     OP_CONSTANT,
     OP_NIL,
     OP_TRUE,
     OP_FALSE,
+    OP_POP,
+    OP_GET_GLOBAL,
+    OP_DEFINE_GLOBAL,
+    OP_SET_GLOBAL,
     OP_EQUAL,
     OP_GREATER,
     OP_LESS,
@@ -24,8 +27,7 @@ typedef enum
     OP_RETURN,
 } OpCode;
 
-typedef struct
-{
+typedef struct {
     int count;
     int capacity;
     uint8_t *code;

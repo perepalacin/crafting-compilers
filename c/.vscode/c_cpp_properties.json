@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-gcc-arm64",
+            "compilerArgs": [
+                "-Wall",
+                "-Wextra",
+                "-Wpedantic",
+                "-Wunused",
+                "-Wuninitialized",
+                "-Wmissing-prototypes",
+                "-Wstrict-prototypes",
+                "-Wimplicit-function-declaration",
+                "-Wreturn-type",
+                "-Wshadow"
+            ]
+        }
+    ],
+    "version": 4
+}

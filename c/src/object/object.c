@@ -1,29 +1,25 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "./object.h"
 #include "../memory/memory.h"
-#include "../value/value.h"
 #include "../table/table.h"
+#include "../value/value.h"
 #include "../vm/vm.h"
+#include "./object.h"
 
-#define ALLOCATE_OBJ(type, objectType) \
-    (type *)allocateObject(sizeof(type), objectType)
+#define ALLOCATE_OBJ(type, objectType) (type *)allocateObject(sizeof(type), objectType)
 
-static uint32_t hashString(const char *key, int length)
-{
+static uint32_t hashString(const char *key, int length) {
     uint32_t hash = 2166136261u;
 
-    for (int i = 0; i < length; i++)
-    {
+    for (int i = 0; i < length; i++) {
         hash ^= key[i];
         hash *= 16777619;
     }
     return hash;
 }
 
-static Obj *allocateObject(size_t size, ObjType type)
-{
+static Obj *allocateObject(size_t size, ObjType type) {
     Obj *object = (Obj *)reallocate(NULL, 0, size);
     object->type = type;
     object->next = vm.objects;
@@ -31,8 +27,7 @@ static Obj *allocateObject(size_t size, ObjType type)
     return object;
 }
 
-static ObjString *allocateString(char *chars, int length, uint32_t hash)
-{
+static ObjString *allocateString(char *chars, int length, uint32_t hash) {
     ObjString *string = ALLOCATE_OBJ(ObjString, OBJ_STRING);
     string->length = length;
     string->chars = chars;
@@ -41,12 +36,10 @@ static ObjString *allocateString(char *chars, int length, uint32_t hash)
     return string;
 }
 
-ObjString *copyString(const char *chars, int length)
-{
+ObjString *copyString(const char *chars, int length) {
     uint32_t hash = hashString(chars, length);
     ObjString *interned = tableFindString(&vm.strings, chars, length, hash);
-    if (interned != NULL)
-    {
+    if (interned != NULL) {
         return interned;
     }
     char *heapChars = ALLOCATE(char, length + 1);
@@ -56,22 +49,18 @@ ObjString *copyString(const char *chars, int length)
     return allocateString(heapChars, length, hash);
 }
 
-void printObject(Value value)
-{
-    switch (OBJ_TYPE(value))
-    {
+void printObject(Value value) {
+    switch (OBJ_TYPE(value)) {
     case OBJ_STRING:
         printf("%s", AS_CSTRING(value));
         break;
     }
 }
 
-ObjString *takeString(char *chars, int length)
-{
+ObjString *takeString(char *chars, int length) {
     uint32_t hash = hashString(chars, length);
     ObjString *interned = tableFindString(&vm.strings, chars, length, hash);
-    if (interned != NULL)
-    {
+    if (interned != NULL) {
         FREE_ARRAY(char, chars, length + 1);
         return interned;
     }

@@ -9,19 +9,16 @@
 #define AS_STRING(value) ((ObjString *)AS_OBJ(value))
 #define AS_CSTRING(value) (((ObjString *)AS_OBJ(value))->chars)
 
-typedef enum
-{
+typedef enum {
     OBJ_STRING,
 } ObjType;
 
-struct Obj
-{
+struct Obj {
     ObjType type;
     struct Obj *next;
 };
 
-struct ObjString
-{
+struct ObjString {
     Obj obj;
     int length;
     char *chars;
@@ -32,8 +29,7 @@ ObjString *takeString(char *chars, int lenght);
 ObjString *copyString(const char *charts, int length);
 void printObject(Value value);
 
-static inline bool isObjType(Value value, ObjType type)
-{
+static inline bool isObjType(Value value, ObjType type) {
     return IS_OBJ(value) && AS_OBJ(value)->type == type;
 }
 

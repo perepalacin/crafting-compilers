@@ -6,14 +6,12 @@
 
 #define TABLE_MAX_LOAD 0.75
 
-typedef struct
-{
+typedef struct {
     ObjString *key;
     Value value;
 } Entry;
 
-typedef struct
-{
+typedef struct {
     int count;
     int capacity;
     Entry *entries;
